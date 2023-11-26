@@ -14,6 +14,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.testng.ITestResult;
 import org.testng.annotations.*;
 
@@ -33,7 +34,7 @@ public class BaseTest {
   public void beforeTestMethod() {
     htmlReporter = new ExtentSparkReporter(System.getProperty("user.dir") + File.separator + "reports" + File.separator + "AutomationReport.html");
     htmlReporter.config().setEncoding("utf-8");
-    htmlReporter.config().setDocumentTitle("Automation Report"+ Instant.now().toString());
+    htmlReporter.config().setDocumentTitle("Automation Report" + Instant.now().toString());
     htmlReporter.config().setReportName("Test Compaign");
     htmlReporter.config().setTheme(Theme.DARK);
     htmlReporter.config().setTimeStampFormat("EEEE d MMMM yyyy hh:mm:ss");
@@ -116,11 +117,12 @@ public class BaseTest {
 
     if (browser.equalsIgnoreCase("chrome")) {
       WebDriverManager.chromedriver().clearDriverCache().setup();
-//      WebDriver driver = new ChromeDriver(options);
       driver = new ChromeDriver();
     } else if (browser.equalsIgnoreCase("firefox")) {
       WebDriverManager.firefoxdriver().clearDriverCache().setup();
-      driver = new FirefoxDriver();
+      FirefoxOptions options = new FirefoxOptions();
+      options.setHeadless(true); // Set Firefox to run in headless mode
+      driver = new FirefoxDriver(options);
     } else if (browser.equalsIgnoreCase("edge")) {
       WebDriverManager.edgedriver().setup();
       driver = new EdgeDriver();
