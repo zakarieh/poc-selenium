@@ -15,6 +15,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.firefox.ProfilesIni;
 import org.testng.ITestResult;
 import org.testng.annotations.*;
 
@@ -120,8 +122,17 @@ public class BaseTest {
       driver = new ChromeDriver();
     } else if (browser.equalsIgnoreCase("firefox")) {
       WebDriverManager.firefoxdriver().clearDriverCache().setup();
+
       FirefoxOptions options = new FirefoxOptions();
+      ProfilesIni profile = new ProfilesIni();
+      FirefoxProfile testprofile = profile.getProfile("debanjan");
+      FirefoxOptions opt = new FirefoxOptions();
+      opt.setProfile(testprofile);
+
       options.setHeadless(true); // Set Firefox to run in headless mode
+      options.setHeadless(true);
+      options.setProfile(testprofile);
+
       driver = new FirefoxDriver(options);
     } else if (browser.equalsIgnoreCase("edge")) {
       WebDriverManager.edgedriver().setup();
