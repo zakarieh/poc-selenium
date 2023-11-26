@@ -125,12 +125,11 @@ public class BaseTest {
 
       FirefoxOptions options = new FirefoxOptions();
       ProfilesIni profile = new ProfilesIni();
-      FirefoxProfile testprofile = profile.getProfile("debanjan");
+      FirefoxProfile testprofile = profile.getProfile("zakarieh");
       FirefoxOptions opt = new FirefoxOptions();
       opt.setProfile(testprofile);
 
       options.setHeadless(true); // Set Firefox to run in headless mode
-      options.setHeadless(true);
       options.setProfile(testprofile);
 
       driver = new FirefoxDriver(options);
