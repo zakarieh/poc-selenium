@@ -17,16 +17,19 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 
-public class SuiteListener implements ITestListener , IAnnotationTransformer {
+public class SuiteListener implements ITestListener, IAnnotationTransformer {
 
   @Override
   public void onTestStart(ITestResult result) {
+    String testName = result.getName();
+    System.out.println(testName + " started executing");
   }
 
 
   @Override
   public void onTestSuccess(ITestResult result) {
-
+    String testName = result.getName();
+    System.out.println(testName + " got succefully executed");
   }
 
   @Override

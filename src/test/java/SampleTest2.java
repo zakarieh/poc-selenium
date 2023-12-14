@@ -1,22 +1,18 @@
 package test.java;
 
 import main.java.fr.mediker.pageEvents.HomePageEvents;
-import main.java.fr.mediker.pageEvents.HomeProfileEvents;
 import main.java.fr.mediker.pageEvents.LoginPageEvents;
-import main.java.fr.mediker.pageObjects.HomeProfileElements;
 import org.testng.annotations.Test;
 
-public class SampleTest extends BaseTest {
+public class SampleTest2 extends BaseTest {
 
-  @Test
-  public void sampleMethodForEnteringCredentials() {
+  @Test(priority = 1)
+  public void sampleMethodForEnteringCredentials2() {
     HomePageEvents homePageEvents = new HomePageEvents();
     LoginPageEvents loginPageEvents = new LoginPageEvents();
-    HomeProfileEvents homeProfileElements = new HomeProfileEvents();
+//    HomeProfileEvents homeProfileElements = new HomeProfileEvents();
     homePageEvents.signInButtonText();
     loginPageEvents.verifyIfLoginIsLoaded();
-    loginPageEvents.enterCredentiels();
-    homeProfileElements.contactCardInHome();
 
   }
 }

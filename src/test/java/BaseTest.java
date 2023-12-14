@@ -15,8 +15,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.firefox.FirefoxProfile;
-import org.openqa.selenium.firefox.ProfilesIni;
 import org.testng.ITestResult;
 import org.testng.annotations.*;
 
@@ -27,64 +25,63 @@ import java.util.concurrent.TimeUnit;
 
 public class BaseTest {
   public static WebDriver driver;
-  public ExtentSparkReporter htmlReporter;
-  public static ExtentReports extent;
-  public static ExtentTest logger;
+  private ExtentSparkReporter extentSparkReporter;
+  private static ExtentReports extentReports;
+  public static ExtentTest extentTest;
 
 
   @BeforeTest
   public void beforeTestMethod() {
-    htmlReporter = new ExtentSparkReporter(System.getProperty("user.dir") + File.separator + "reports" + File.separator + "AutomationReport.html");
-    htmlReporter.config().setEncoding("utf-8");
-    htmlReporter.config().setDocumentTitle("Automation Report" + Instant.now().toString());
-    htmlReporter.config().setReportName("Test Compaign");
-    htmlReporter.config().setTheme(Theme.DARK);
-    htmlReporter.config().setTimeStampFormat("EEEE d MMMM yyyy hh:mm:ss");
-    htmlReporter.config().setCss(".badge-primary(background-color: #00000}");
+    extentSparkReporter = new ExtentSparkReporter(System.getProperty("user.dir") + File.separator + "reports" + File.separator + "automation-report.html");
+    extentSparkReporter.config().setEncoding("utf-8");
+    extentSparkReporter.config().setDocumentTitle("Automation Report" + Instant.now().toString());
+    extentSparkReporter.config().setReportName("Test Compaign");
+    extentSparkReporter.config().setTheme(Theme.DARK);
+    extentSparkReporter.config().setTimeStampFormat("EEEE d MMMM yyyy hh:mm:ss");
+    extentSparkReporter.config().setCss(".badge-primary(background-color: #00000}");
 //    htmlReporter.config().setJs("document.getElementsByClassName('logo')[0].style.display='none';");
 
 
-    extent = new ExtentReports();
-    extent.attachReporter(htmlReporter);
-    extent.setSystemInfo("Automation Tester", "Eng. Zakarieh F. Arreh");
+    extentReports = new ExtentReports();
+    extentReports.attachReporter(extentSparkReporter);
+    extentReports.setSystemInfo("Automation Tester", "Eng. Zakarieh F. Arreh");
   }
 
   @BeforeMethod
   @Parameters(value = {"browserName"})
   public void beforeMethodMethod(String browserName, Method testMethod) {
-    logger = extent.createTest(testMethod.getName());
+    extentTest = extentReports.createTest(
+      testMethod.getName());
 
     setUpDriver(browserName);
     driver.get(Constants.url);
-//    driver.navigate().to(Constants.url);
     System.out.println("Browser selected: " + browserName);
     driver.manage().window().maximize();
-//    driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
   }
 
   @AfterMethod
   public void afterMethod(ITestResult result) {
     if (result.getStatus() == ITestResult.FAILURE) {
-//      logger.log(Status.FAIL, MarkupHelper.createLabel(result.getName() + " - Test Case Failed", ExtentColor.RED));
+      extentTest.log(Status.FAIL, MarkupHelper.createLabel(result.getName() + " - Test Case Failed", ExtentColor.RED));
+      extentTest.log(Status.FAIL, MarkupHelper.createLabel(result.getThrowable() + " - Test Case Failed", ExtentColor.RED));
+//      String methodName = result.getMethod().getMethodName();
+//      String logText = "Test Case:" + methodName + " Skipped";
+//      Markup m = MarkupHelper.createLabel(logText, ExtentColor.RED);
+//      logger.log(Status.FAIL, m);
 //      logger.log(Status.FAIL, MarkupHelper.createLabel(result.getThrowable() + " - Test Case Failed", ExtentColor.RED));
-      String methodName = result.getMethod().getMethodName();
-      String logText = "Test Case:" + methodName + " Skipped";
-      Markup m = MarkupHelper.createLabel(logText, ExtentColor.RED);
-      logger.log(Status.FAIL, m);
-      logger.log(Status.FAIL, MarkupHelper.createLabel(result.getThrowable() + " - Test Case Failed", ExtentColor.RED));
     } else if (result.getStatus() == ITestResult.FAILURE) {
 //      logger.log(Status.SKIP, MarkupHelper.createLabel(result.getName() + " - Test Case Skipped", ExtentColor.ORANGE));
       String methodName = result.getMethod().getMethodName();
       String logText = "Test Case:" + methodName + " Skipped";
       Markup m = MarkupHelper.createLabel(logText, ExtentColor.YELLOW);
-      logger.log(Status.SKIP, m);
+      extentTest.log(Status.SKIP, m);
     } else if (result.getStatus() == ITestResult.SUCCESS) {
 //      logger.log(Status.PASS, MarkupHelper.createLabel(result.getName() + " - Test Case PASS", ExtentColor.GREEN));
       String methodName = result.getMethod().getMethodName();
-      String logText = "Test Case:" + methodName + " Passed ";
-      Markup m = MarkupHelper.createLabel(logText, ExtentColor.GREEN);
-      logger.log(Status.PASS, m);
+      String logText = "Test Case: " + methodName + " Passed ";
+      Markup m = MarkupHelper.createLabel(logText, ExtentColor.CYAN);
+      extentTest.log(Status.PASS, m);
     }
     driver.quit();
   }
@@ -92,12 +89,8 @@ public class BaseTest {
 
   @AfterTest
   public void afterTestMethod() {
-    extent.flush();
+    extentReports.flush();
   }
-
-//  ElementFetch elementFetch = new ElementFetch();
-//  HomePageEvents homePageEvents = new HomePageEvents();
-//  LoginPageEvents loginPageEvents = new LoginPageEvents();
 
 
   protected void setUpDriver(String browser) {
@@ -107,8 +100,9 @@ public class BaseTest {
 ////      System.getProperty("webdriver.chrome.driver", "~/Documents/Self-proj/poc-selenium/drivers/chromedriver");
 //      driver = new ChromeDriver();
 //    } else if (browser.equalsIgnoreCase("firefox")) {
-//      System.getProperty("webdriver.gecko.driver", System.getProperty("user.dir") + File.separator + "drivers" + File.separator + "chromedriver");
+//      System.getProperty("webdriver.gecko.driver", System.getProperty("user.dir") + File.separator + "drivers" + File.separator + "geckodriver");
 //      FirefoxOptions options = new FirefoxOptions();
+//      options.addArguments("-headless");
 //      options.setCapability("acceptInsecureCerts", true);
 //      options.setCapability("browserName", "firefox");
 //      driver = new FirefoxDriver(options);
@@ -121,17 +115,12 @@ public class BaseTest {
       WebDriverManager.chromedriver().clearDriverCache().setup();
       driver = new ChromeDriver();
     } else if (browser.equalsIgnoreCase("firefox")) {
-      WebDriverManager.firefoxdriver().clearDriverCache().setup();
-
       FirefoxOptions options = new FirefoxOptions();
-      ProfilesIni profile = new ProfilesIni();
-      FirefoxProfile testprofile = profile.getProfile("zakarieh");
-      FirefoxOptions opt = new FirefoxOptions();
-      opt.setProfile(testprofile);
-
-      options.setHeadless(true); // Set Firefox to run in headless mode
-      options.setProfile(testprofile);
-
+//      options.addArguments("--window-size=1920,1080");
+      options.addArguments("-headless");
+//      options.addArguments("--disable-gpu");
+//      options.addArguments("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36");
+      WebDriverManager.firefoxdriver().setup();
       driver = new FirefoxDriver(options);
     } else if (browser.equalsIgnoreCase("edge")) {
       WebDriverManager.edgedriver().setup();

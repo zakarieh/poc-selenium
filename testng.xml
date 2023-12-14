@@ -4,10 +4,13 @@
   <listeners>
     <listener class-name="main.java.fr.mediker.utils.SuiteListener"/>
   </listeners>
-  <test name="Test Automation FireFox">
+  <test name="Test Automation FireFox 1">
     <parameter name="browserName" value="firefox"/>
     <classes>
-      <class name="test.java.SampleTest"/>
+      <class name="test.java.SampleTest1">
+        <parameter name="testName" value="Verify if user is redirected to login page"/>
+      </class>
+      <class name="test.java.SampleTest2"/>
     </classes>
   </test>
 </suite>
